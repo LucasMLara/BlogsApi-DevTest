@@ -14,7 +14,7 @@ const validUser = async (req, _res, next) => {
 const checkIfUserExists = async (req, _res, next) => {
   const { id } = req.params;
   const user = await User.findByPk(id);
-  if (!user) return next({ statusCode: NOT_FOUND, message: 'User does not exist' });
+  if (!user) return next({ statusCode: NOT_FOUND, message: 'Usuário não existe' });
   return next();
 };
 
