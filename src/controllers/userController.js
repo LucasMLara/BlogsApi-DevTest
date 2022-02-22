@@ -1,7 +1,7 @@
 const {
   StatusCodes: { CREATED, OK, INTERNAL_SERVER_ERROR },
 } = require('http-status-codes');
-const { create, listAllUsers } = require('../services/userService');
+const { create, listAllUsers, getUserById } = require('../services/userService');
 const login = require('../services/loginService');
 
 const createNewUser = async (req, res, next) => {
@@ -33,8 +33,19 @@ const getEveryone = async (_req, res, next) => {
   }
 };
 
+const getById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const singleUser = await getUserById(id);
+    return res.status(OK).json(singleUser);
+  } catch (e) {
+    return next({ statusCode: INTERNAL_SERVER_ERROR, message: e.message });
+  }
+};
+
 module.exports = {
   createNewUser,
   loginUser,
   getEveryone,
+  getById,
 };
