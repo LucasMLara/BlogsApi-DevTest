@@ -1,5 +1,5 @@
 const {
-  createNewUser, loginUser, getEveryone, getById,
+  createNewUser, loginUser, getEveryone, getById, removeMySelf,
 } = require('./userController');
 
 module.exports = {
@@ -7,4 +7,5 @@ module.exports = {
   loginUser,
   getEveryone,
   getById,
+  removeMySelf,
 };
