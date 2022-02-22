@@ -1,7 +1,11 @@
 const {
-  StatusCodes: { CREATED, OK, INTERNAL_SERVER_ERROR },
+  StatusCodes: {
+    CREATED, OK, INTERNAL_SERVER_ERROR, NO_CONTENT,
+  },
 } = require('http-status-codes');
-const { create, listAllUsers, getUserById } = require('../services/userService');
+const {
+  create, listAllUsers, getUserById, remove,
+} = require('../services/userService');
 const login = require('../services/loginService');
 
 const createNewUser = async (req, res, next) => {
@@ -43,9 +47,20 @@ const getById = async (req, res, next) => {
   }
 };
 
+const removeMySelf = async (req, res, next) => {
+  try {
+    const { id } = req.user.data;
+    await remove(id);
+    return res.status(NO_CONTENT).send();
+  } catch (e) {
+    return next({ statusCode: INTERNAL_SERVER_ERROR, message: e.message });
+  }
+};
+
 module.exports = {
   createNewUser,
   loginUser,
   getEveryone,
   getById,
+  removeMySelf,
 };
