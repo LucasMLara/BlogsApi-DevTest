@@ -34,7 +34,6 @@ Este repositório armazena a lógica do banco de dados da aplicação! Trata-se 
 - MySql
 - ES6
 - Sequelize
-- Sequelize Test Helpers
 - Mocha
 - Chai
 - Sinon
