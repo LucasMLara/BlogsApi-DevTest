@@ -1,5 +1,4 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '..', '..', '.env') });
+require('dotenv').config();
 
 module.exports = {
   development: {
@@ -7,6 +6,7 @@ module.exports = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     host: process.env.HOSTNAME,
+    port: process.env.PORT,
     dialect: 'mysql',
   },
   test: {
