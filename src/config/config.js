@@ -24,9 +24,3 @@ module.exports = {
     dialect: 'mysql',
   },
 };
-
-console.log('📓 ~ file: config.js ~ line 11 ~ process.env.PORT', process.env.PORT);
-console.log('📓 ~ file: config.js ~ line 8 ~ process.env.MYSQL_PASSWORD', process.env.MYSQL_PASSWORD);
-console.log('📓 ~ file: config.js ~ line 10 ~ process.env.MYSQL_DATABASE', process.env.MYSQL_DATABASE);
-console.log('📓 ~ file: config.js ~ line 12 ~ process.env.HOSTNAME', process.env.HOSTNAME);
-console.log('📓 ~ file: config.js ~ line 7 ~ process.env.MYSQL_USER', process.env.MYSQL_USER);
