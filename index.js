@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { error } = require('./src/middlewares');
 
-const { userRouter, loginRouter } = require('./src/routes');
+const { userRouter, loginRouter, postRouter } = require('./src/routes');
 
 const app = express();
 app.use(bodyParser.json());
@@ -12,4 +12,6 @@ app.listen(PORT, () => console.log(`ouvindo porta ${PORT}!`));
 
 app.use('/user', userRouter);
 app.use('/login', loginRouter);
+app.use('/post', postRouter);
+
 app.use(error);
