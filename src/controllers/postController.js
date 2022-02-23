@@ -1,5 +1,7 @@
 const { StatusCodes: { CREATED, INTERNAL_SERVER_ERROR, OK } } = require('http-status-codes');
-const { create, getAllPosts, getASinglePost } = require('../services/postService');
+const {
+  create, getAllPosts, getASinglePost, updateASinglePost,
+} = require('../services/postService');
 
 const createNewPost = async (req, res, next) => {
   try {
@@ -37,8 +39,20 @@ const getSinglePost = async (req, res, next) => {
   }
 };
 
+const updatePost = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const postUpdate = await updateASinglePost(id, { title, content });
+    return res.status(OK).json(postUpdate);
+  } catch (e) {
+    return next({ statusCode: INTERNAL_SERVER_ERROR, message: e.message });
+  }
+};
+
 module.exports = {
   createNewPost,
   getPosts,
   getSinglePost,
+  updatePost,
 };

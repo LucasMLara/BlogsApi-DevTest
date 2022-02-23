@@ -16,8 +16,15 @@ const getASinglePost = async (id) => {
   return post;
 };
 
+const updateASinglePost = async (id, { title, content }) => {
+  await Post.update({ title, content }, { where: { id } });
+  const postUpdated = await getASinglePost(id);
+  return postUpdated;
+};
+
 module.exports = {
   create,
   getAllPosts,
   getASinglePost,
+  updateASinglePost,
 };
