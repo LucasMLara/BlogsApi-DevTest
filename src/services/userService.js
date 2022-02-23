@@ -17,12 +17,12 @@ const create = async (data) => {
 };
 
 const listAllUsers = async () => {
-  const allUsers = await User.findAll();
+  const allUsers = await User.findAll({ attributes: { exclude: ['password'] } });
   return allUsers;
 };
 
 const getUserById = async (id) => {
-  const user = await User.findByPk(id);
+  const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
   return user;
 };
 
