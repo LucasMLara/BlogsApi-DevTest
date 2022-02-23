@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha ./tests/**/*$NAME*.test.js --exit",
-    "dev": "nodemon index.js"
+    "dev": "clear && nodemon index.js"
   },
   "author": "Lucas M. Lara",
   "license": "ISC",
