@@ -11,7 +11,13 @@ const getAllPosts = async () => {
   return allPosts;
 };
 
+const getASinglePost = async (id) => {
+  const post = await Post.findByPk(id, { include: [{ all: true, attributes: { exclude: ['password'] } }], attributes: { exclude: ['userId'] } });
+  return post;
+};
+
 module.exports = {
   create,
   getAllPosts,
+  getASinglePost,
 };
