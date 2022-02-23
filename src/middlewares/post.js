@@ -1,6 +1,7 @@
-const { StatusCodes: { BAD_REQUEST, NOT_FOUND } } = require('http-status-codes');
+const { StatusCodes: { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } } = require('http-status-codes');
 const { postSchema } = require('../validations/schema');
 const { Post } = require('../models');
+const { getASinglePost } = require('../services/postService');
 
 const validPost = async (req, _res, next) => {
   const { title, content } = req.body;
@@ -18,7 +19,19 @@ const checkIfPostExists = async (req, _res, next) => {
   return next();
 };
 
+const checkPostOwnership = async (req, _res, next) => {
+  const { id } = req.params;
+  const { id: userId } = req.user.data;
+  const verifying = await getASinglePost(id);
+  const checkUserId = verifying.dataValues.user.dataValues.id;
+  if (userId !== checkUserId) {
+    return next({ statusCode: UNAUTHORIZED, message: 'Usuário não autorizado' });
+  }
+  return next();
+};
+
 module.exports = {
   validPost,
   checkIfPostExists,
+  checkPostOwnership,
 };
