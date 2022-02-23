@@ -2,7 +2,7 @@ const {
   createNewUser, loginUser, getEveryone, getById, removeMySelf,
 } = require('./userController');
 const {
-  createNewPost, getPosts, getSinglePost, updatePost,
+  createNewPost, getPosts, getSinglePost, updatePost, getPostByString,
 } = require('./postController');
 
 module.exports = {
@@ -15,4 +15,6 @@ module.exports = {
   getPosts,
   getSinglePost,
   updatePost,
+  getPostByString
+  ,
 };
