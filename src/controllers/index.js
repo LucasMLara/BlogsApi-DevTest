@@ -1,7 +1,7 @@
 const {
   createNewUser, loginUser, getEveryone, getById, removeMySelf,
 } = require('./userController');
-const { createNewPost } = require('./postController');
+const { createNewPost, getPosts } = require('./postController');
 
 module.exports = {
   createNewUser,
@@ -10,4 +10,5 @@ module.exports = {
   getById,
   removeMySelf,
   createNewPost,
+  getPosts,
 };
