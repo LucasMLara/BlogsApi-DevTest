@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const {
   StatusCodes: {
     CREATED, OK, INTERNAL_SERVER_ERROR, NO_CONTENT,
@@ -8,8 +9,15 @@ const {
 } = require('../services/userService');
 const login = require('../services/loginService');
 
+const {
+  SALT, ITERATIONS, KEYLEN, DIGEST,
+} = process.env;
+
 const createNewUser = async (req, res, next) => {
-  const { displayName, email, password } = req.body;
+  const { displayName, email, password: vulnerablePassword } = req.body;
+  const password = crypto.pbkdf2Sync(vulnerablePassword, SALT, +ITERATIONS, +KEYLEN, DIGEST).toString('utf-8');
+  // https://www.geeksforgeeks.org/node-js-crypto-pbkdf2sync-method/
+  // https://blog.logrocket.com/node-js-crypto-module-a-tutorial/#addingcryptotoanodejsapp
   try {
     const newUser = await create({ displayName, email, password });
     return res.status(CREATED).json({ token: newUser.token });
@@ -19,7 +27,8 @@ const createNewUser = async (req, res, next) => {
 };
 
 const loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password: vulnerablePassword } = req.body;
+  const password = crypto.pbkdf2Sync(vulnerablePassword, SALT, +ITERATIONS, +KEYLEN, DIGEST).toString('utf-8');
   try {
     const token = await login({ email, password });
     res.status(OK).json(token);
