@@ -12,7 +12,8 @@ const jwtConfig = {
 
 const create = async (data) => {
   const newUser = await User.create(data);
-  const token = sign({ data: newUser }, JWT_SECRET, jwtConfig);
+  const { password: _, ...userWithoutPassword } = newUser.dataValues;
+  const token = sign({ data: userWithoutPassword }, JWT_SECRET, jwtConfig);
   return { token };
 };
 
