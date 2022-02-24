@@ -40,10 +40,15 @@ const getSearchTerm = async (query) => {
 
 // https://stackoverflow.com/questions/20695062/sequelize-or-condition-object/32543638
 
+const remove = async (id) => {
+  await Post.destroy({ where: { id } });
+};
+
 module.exports = {
   create,
   getAllPosts,
   getASinglePost,
   updateASinglePost,
   getSearchTerm,
+  remove,
 };
