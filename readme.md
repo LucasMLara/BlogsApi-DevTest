@@ -37,6 +37,11 @@ Este repositório armazena a lógica do banco de dados da aplicação! Trata-se 
 - Mocha
 - Chai
 - Sinon
+- JWT
+- Joi
+- Nodemon
+- Crypto
+
 
 <br>
 
