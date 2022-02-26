@@ -15,3 +15,5 @@ app.use('/login', loginRouter);
 app.use('/post', postRouter);
 
 app.use(error);
+
+module.exports = app;
