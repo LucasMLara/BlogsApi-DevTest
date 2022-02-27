@@ -7,7 +7,7 @@ const validUser = async (req, _res, next) => {
   const { error } = userSchema.validate({ displayName, email, password });
   if (error) return next({ statusCode: BAD_REQUEST, message: error.message });
   const emailAlreadyExists = await User.findOne({ where: { email: req.body.email } });
-  if (emailAlreadyExists) return next({ statusCode: CONFLICT, message: "'Usuário já existe'" });
+  if (emailAlreadyExists) return next({ statusCode: CONFLICT, message: 'Usuário já existe' });
   return next();
 };
 
