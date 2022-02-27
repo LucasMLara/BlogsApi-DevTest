@@ -6,9 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "setProject": "npx sequelize-cli db:drop && npx sequelize-cli db:create &&npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-    "test": "mocha ./tests/**/*$NAME*.test.js --exit",
-    "dev": "clear && nodemon index.js",
-    "agilizateste": "npm run setProject && npm test"
+    "test": "npm run setProject && mocha ./tests/**/*$NAME*.test.js --exit",
+    "dev": "clear && nodemon index.js"
   },
   "author": "Lucas M. Lara",
   "license": "ISC",
