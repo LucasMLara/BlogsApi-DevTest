@@ -22,48 +22,36 @@ const {
 const server = require('../index');
 
 describe("1 - Utilizando a rota '/user' ", () => {
-  describe('ao tentar criar um novo usuário com sucesso', async () => {
-    const response = await chai.request(server).post('/user').send({
-      displayName: 'Gabriel Oliva',
-      email: 'gabrielOliva@trybe.com',
-      password: '123456',
-    });
-    it('retorna Status HTTP 201 - "CREATED"', () => {
-      console.log('alo');
-      expect(response.body).to.have.status(CREATED);
-    });
-
-    it('retorna um Objeto', () => {
-      expect(response.body).to.be.a('object');
-    });
-
-    it('com a propriedade "token"', () => {
-      expect(response.body).to.have.property('token');
-    });
-    it('e que o token não venha vazio', () => {
-      expect(response.body.token).to.not.be.empty();
-    });
-  });
-
-  describe('Checa se o usuário é único', async () => {
-    before(async () => {
-      await chai.request(server).post('/user').send({
+  describe('ao tentar criar um novo usuário com sucesso', () => {
+    it('retorna Status HTTP 201 - "CREATED" e um token', async () => {
+      const response = await chai.request(server).post('/user').send({
         displayName: 'Gabriel Oliva',
         email: 'gabrielOliva@trybe.com',
         password: '123456',
       });
+      expect(response).to.have.status(CREATED);
+      expect(response.body).to.be.a('object');
+      expect(response.body).to.have.property('token');
+      expect(response.body.token).to.not.have.lengthOf(0);
     });
-    const response = await chai.request(server).post('/user').send({
-      displayName: 'Gabriel Oliva',
-      email: 'gabrielOliva@trybe.com',
-      password: '123456',
-    });
+  });
 
-    it("retorna status HTTP - 409 'CONFLICT' ", () => {
+  describe('Checa se o usuário é único', async () => {
+    let response;
+    before(async () => {
+      await chai.request(server).post('/user').send({
+        displayName: 'Rafael Luiz',
+        email: 'rafaelLuiz@trybe.com',
+        password: '123456',
+      });
+    });
+    it("retorna status HTTP - 409 'CONFLICT' e a mensagem 'Usuário já existe' ", async () => {
+      response = await chai.request(server).post('/user').send({
+        displayName: 'Rafael Luiz',
+        email: 'rafaelLuiz@trybe.com',
+        password: '123456',
+      });
       expect(response).to.have.status(CONFLICT);
-    });
-
-    it('retorna um objeto com a mensagem: Usuário já existe', () => {
       expect(response.body).to.deep.equal({ message: 'Usuário já existe' });
     });
   });
@@ -112,11 +100,7 @@ describe("1 - Utilizando a rota '/user' ", () => {
         password: '123456',
       });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        '"email" must be a valid email',
-      );
+      expect(response.body).to.deep.equal({ message: '"email" must be a valid email' });
     });
     it('Password é requerido!', async () => {
       const response = await chai.request(server).post('/user').send({
@@ -193,9 +177,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       });
 
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Campos inválidos');
+      expect(response.body).to.deep.equal({ message: 'Campos inválidos' });
     });
     it('Verifica se as credenciais estão incorretas', async () => {
       const response = await chai.request(server).post('/login').send({
@@ -204,9 +186,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       });
 
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Campos inválidos');
+      expect(response.body).to.deep.equal({ message: 'Campos inválidos' });
     });
   });
 });
@@ -234,9 +214,7 @@ describe("3 - Utilizando a rota GET '/user'", () => {
     it('Sem o token', async () => {
       response = await chai.request(server).get('/user');
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token não encontrado');
+      expect(response.body).to.deep.equal({ message: 'Token não encontrado' });
     });
     it('Token adulterado', async () => {
       const wrongToken = 'notRealToken';
@@ -245,9 +223,7 @@ describe("3 - Utilizando a rota GET '/user'", () => {
         .get('/user')
         .set({ Authorization: wrongToken });
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token expirado ou inválido');
+      expect(response.body).to.deep.equal({ message: 'Token expirado ou inválido' });
     });
   });
 });
@@ -255,11 +231,10 @@ describe("3 - Utilizando a rota GET '/user'", () => {
 describe("4 - Utilizando a rota GET '/user/:id'", () => {
   let response;
   let Authorization;
-
   before(async () => {
     const {
       body: { token },
-    } = await chai.request(server).get('/login').send({
+    } = await chai.request(server).post('/login').send({
       email: 'marina.drummond@trybe.com',
       password: '123456',
     });
@@ -267,16 +242,13 @@ describe("4 - Utilizando a rota GET '/user/:id'", () => {
   });
   describe('Verifica-se retorna a pessoa usuária buscada', () => {
     it('Devidamente autenticado', async () => {
+      const ALLOWED_KEYS = ['id', 'displayName', 'email', 'image'];
       response = await chai
         .request(server)
         .get('/user/1')
         .set({ Authorization });
       expect(response).to.have.status(OK);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('id');
-      expect(response.body).to.have.property('displayName');
-      expect(response.body).to.have.property('email');
-      expect(response.body).to.have.property('image');
+      expect(response.body).to.have.all.keys(...ALLOWED_KEYS);
     });
     it('se a pessoa usuária não existe', async () => {
       response = await chai
@@ -284,16 +256,12 @@ describe("4 - Utilizando a rota GET '/user/:id'", () => {
         .get('/user/99999999999999999999999999')
         .set({ Authorization });
       expect(response).to.have.status(NOT_FOUND);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Usuário não existe');
+      expect(response.body).to.deep.equal({ message: 'Usuário não existe' });
     });
     it('Sem o token', async () => {
       response = await chai.request(server).get('/user/1');
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token não encontrado');
+      expect(response.body).to.deep.equal({ message: 'Token não encontrado' });
     });
     it('Token adulterado', async () => {
       const wrongToken = 'xablau';
@@ -302,9 +270,7 @@ describe("4 - Utilizando a rota GET '/user/:id'", () => {
         .get('/user/1')
         .set({ Authorization: wrongToken });
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token expirado ou inválido');
+      expect(response.body).to.deep.equal({ message: 'Token expirado ou inválido' });
     });
   });
 });
@@ -314,7 +280,7 @@ describe("5 - Utilizando a rota DELETE '/user/me'", () => {
     it('Obtendo sucesso', async () => {
       const {
         body: { token },
-      } = await chai.request(server).get('/login').send({
+      } = await chai.request(server).post('/login').send({
         email: 'marina.drummond@trybe.com',
         password: '123456',
       });
@@ -328,9 +294,7 @@ describe("5 - Utilizando a rota DELETE '/user/me'", () => {
     it('Sem o token', async () => {
       const response = await chai.request(server).delete('/user/me');
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token não encontrado');
+      expect(response.body).to.deep.equal({ message: 'Token não encontrado' });
     });
     it('Token adulterado', async () => {
       const wrongToken = 'SempreÉBomPraticar';
@@ -339,9 +303,7 @@ describe("5 - Utilizando a rota DELETE '/user/me'", () => {
         .delete('/user/me')
         .set({ Authorization: wrongToken });
       expect(response).to.have.status(UNAUTHORIZED);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal('Token expirado ou inválido');
+      expect(response.body).to.deep.equal({ message: 'Token expirado ou inválido' });
     });
   });
 });
