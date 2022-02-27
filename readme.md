@@ -18,7 +18,7 @@ Processo Seletivo - Pessoa Desenvolvedora </h1>  </p>
 
 
 # Sobre o Projeto!
-Este repositório armazena a lógica do banco de dados da aplicação! Trata-se de uma aplicação C.R.U.D para  um Blog!
+### Este repositório armazena a lógica do banco de dados da aplicação! Trata-se de uma aplicação C.R.U.D para  um Blog!
 
 <br>
 
@@ -36,7 +36,6 @@ Este repositório armazena a lógica do banco de dados da aplicação! Trata-se 
 - Sequelize
 - Mocha
 - Chai
-- Sinon
 - JWT
 - Joi
 - Nodemon
@@ -45,25 +44,53 @@ Este repositório armazena a lógica do banco de dados da aplicação! Trata-se 
 
 <br>
 
+>>> # Scripts principais
+
+
 ## Instalando Dependências
 
 ```bash
 cd lucasLara-backEnd-Test/ 
 npm install
 ``` 
+## Preparando o banco de dados
+
+  ```bash
+  npm setProject
+  ```
 
 ## Executando aplicação
 
 * Para rodar o back-end:
 
+  ```bash
+  npm start
   ```
-  cd lucasLara-backEnd-Test/ && npm start
+
+## Executando em modo de Desenvovimento:
+
+  ```bash
+  npm run dev
   ```
+  
 
 ## Executando Testes
 
 * Para rodar todos os testes:
 
-  ```
+  ```bash
     npm test
   ```
+>>> O banco de dados é reestruturado a cada teste para garantir o comportamento esperado
+
+<br>
+
+## Referências:
+
+* [ BlogRocket - Utilizando Crypto para proteger os dados no banco](https://blog.logrocket.com/node-js-crypto-module-a-tutorial/#addingcryptotoanodejsapp)
+
+* [GeeksForGeeks - Utilizando Crypto para proteger os dados no banco](https://www.geeksforgeeks.org/node-js-crypto-pbkdf2sync-method/)
+
+* [Sequelize - Method FindAll - Trazendo dados de mais de uma tabela em uma única query](https://sequelize.org/master/class/src/model.js~Model.html#static-method-findAll)
+
+* [String Operator Sequelize - Busca por string](https://stackoverflow.com/questions/20695062/sequelize-or-condition-object/32543638)
