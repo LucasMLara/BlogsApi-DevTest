@@ -1,7 +1,6 @@
 const chai = require('chai');
 
 const { expect } = chai;
-const sinon = require('sinon');
 const chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
@@ -15,12 +14,10 @@ const {
 } = require('http-status-codes');
 const server = require('../index');
 
-describe("1 - Utilizando a rota '/users' ", () => {
+describe.only("1 - Utilizando a rota '/user' ", () => {
   describe('ao tentar criar um novo usuário com sucesso', async () => {
-    let response;
-
-    response = await chai.request(server)
-      .post('/users')
+    const response = await chai.request(server)
+      .post('/user')
       .send({
         displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
       });
@@ -37,21 +34,20 @@ describe("1 - Utilizando a rota '/users' ", () => {
       expect(response.body).to.have.property('token');
     });
     it('e que o token não venha vazio', () => {
-      expect(response.body.token).to.not.be.empty;
+      expect(response.body.token).to.not.be.empty();
     });
   });
 
   describe('Checa se o usuário é único', async () => {
-    let response;
     before(async () => {
       await chai.request(server)
-        .post('/users')
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
         });
     });
-    response = await chai.request(server)
-      .post('/users')
+    const response = await chai.request(server)
+      .post('/user')
       .send({
         displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
       });
@@ -72,9 +68,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
 
   describe('checa se o usuário está inserindo os inputs corretamente', () => {
     it("Verifica se 'displayName' foi inserido!", async () => {
-      let response;
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           email: 'gabrielOliva@trybe.com', password: '123456',
         });
@@ -85,10 +80,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
     });
 
     it("Verifica se 'displayName' possui ao menos 8 caracteres!", async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel', email: 'gabrielOliva@trybe.com', password: '123456',
         });
@@ -100,10 +93,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
       );
     });
     it('Email é requerido!', async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', password: '123456',
         });
@@ -113,10 +104,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
       expect(response.body.message).to.be.equal("'email' is required");
     });
     it('Email sem o nome do usuário!', async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', email: '@trybe.com', password: '123456',
         });
@@ -128,10 +117,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
       );
     });
     it('Email sem o domínio!', async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', email: 'gabrielOliva', password: '123456',
         });
@@ -143,10 +130,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
       );
     });
     it('Password é requerido!', async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com',
         });
@@ -156,10 +141,8 @@ describe("1 - Utilizando a rota '/users' ", () => {
       expect(response.body.message).to.be.equal("'password' is required");
     });
     it("Verifica se 'password' possui ao menos 6 caracteres!", async () => {
-      let response;
-
-      response = await chai.request(server)
-        .post('/users')
+      const response = await chai.request(server)
+        .post('/user')
         .send({
           displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '12345',
         });
@@ -175,9 +158,7 @@ describe("1 - Utilizando a rota '/users' ", () => {
 
 describe("2 - Utilizando a rota '/login'", () => {
   describe('chega se o usuário loga da forma correta', async () => {
-    let response;
-
-    response = await chai.request(server)
+    const response = await chai.request(server)
       .post('/login')
       .send({
         email: 'gabrielOliva@trybe.com', password: '123456',
@@ -195,9 +176,7 @@ describe("2 - Utilizando a rota '/login'", () => {
 
   describe('checa se o usuário está inserindo os inputs corretamente', () => {
     it('Email é requerido!', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           password: '123456',
@@ -208,9 +187,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       expect(response.body.message).to.be.equal("'email' is required");
     });
     it('Email não pode ser vazio!', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           email: '', password: '123456',
@@ -223,9 +200,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       );
     });
     it('Password é requerido!', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           password: '123456',
@@ -236,9 +211,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       expect(response.body.message).to.be.equal("'password' is required");
     });
     it('Password não pode ser vazio!', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           email: 'gabrielOliva@trybe.com', password: '',
@@ -251,9 +224,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       );
     });
     it('Verifica se as credenciais estão incorretas', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           email: 'gabrielOliva@trybe.com', password: '654321',
@@ -265,9 +236,7 @@ describe("2 - Utilizando a rota '/login'", () => {
       expect(response.body.message).to.be.equal('Campos inválidos');
     });
     it('Verifica se as credenciais estão incorretas', async () => {
-      let response;
-
-      response = await chai.request(server)
+      const response = await chai.request(server)
         .post('/login')
         .send({
           email: 'gabrielOlivaDaSilva@trybe.com', password: '123456',
@@ -386,26 +355,24 @@ describe("4 - Utilizando a rota GET '/user/:id'", () => {
   });
 });
 
-describe("5 - Utilizando a rota DELETE '/users/me'", () => {
+describe("5 - Utilizando a rota DELETE '/user/me'", () => {
   describe('Verifica-se deleta o usuário', () => {
-    before(async () => {
+    it('Obtendo sucesso', async () => {
       const {
         body: { token },
       } = await chai.request(server).get('/login').send({
         email: 'marina.drummond@trybe.com',
         password: '123456',
       });
-      Authorization = token;
-    });
-    it('Obtendo sucesso', async () => {
-      response = await chai
+      const Authorization = token;
+      const response = await chai
         .request(server)
         .delete('/user/me')
         .set({ Authorization });
       expect(response).to.have.status(NO_CONTENT);
     });
     it('Sem o token', async () => {
-      response = await chai
+      const response = await chai
         .request(server)
         .delete('/user/me');
       expect(response).to.have.status(UNAUTHORIZED);
@@ -415,7 +382,7 @@ describe("5 - Utilizando a rota DELETE '/users/me'", () => {
     });
     it('Token adulterado', async () => {
       const wrongToken = 'SempreÉBomPraticar';
-      response = await chai
+      const response = await chai
         .request(server)
         .delete('/user/me')
         .set({ Authorization: wrongToken });
