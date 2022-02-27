@@ -40,6 +40,7 @@ Processo Seletivo - Pessoa Desenvolvedora </h1>  </p>
 - Joi
 - Nodemon
 - Crypto
+- ESLint
 
 
 <br>
