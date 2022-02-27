@@ -9,21 +9,28 @@ chai.use(chaiHttp);
 
 const {
   StatusCodes: {
-    CREATED, BAD_REQUEST, OK, UNAUTHORIZED, CONFLICT, NOT_FOUND, NO_CONTENT,
+    CREATED,
+    BAD_REQUEST,
+    OK,
+    UNAUTHORIZED,
+    CONFLICT,
+    NOT_FOUND,
+    NO_CONTENT,
   },
 } = require('http-status-codes');
+
 const server = require('../index');
 
-describe.only("1 - Utilizando a rota '/user' ", () => {
+describe("1 - Utilizando a rota '/user' ", () => {
   describe('ao tentar criar um novo usuário com sucesso', async () => {
-    const response = await chai.request(server)
-      .post('/user')
-      .send({
-        displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
-      });
-
+    const response = await chai.request(server).post('/user').send({
+      displayName: 'Gabriel Oliva',
+      email: 'gabrielOliva@trybe.com',
+      password: '123456',
+    });
     it('retorna Status HTTP 201 - "CREATED"', () => {
-      expect(response).to.have.status(CREATED);
+      console.log('alo');
+      expect(response.body).to.have.status(CREATED);
     });
 
     it('retorna um Objeto', () => {
@@ -40,129 +47,103 @@ describe.only("1 - Utilizando a rota '/user' ", () => {
 
   describe('Checa se o usuário é único', async () => {
     before(async () => {
-      await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
-        });
-    });
-    const response = await chai.request(server)
-      .post('/user')
-      .send({
-        displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '123456',
+      await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        email: 'gabrielOliva@trybe.com',
+        password: '123456',
       });
+    });
+    const response = await chai.request(server).post('/user').send({
+      displayName: 'Gabriel Oliva',
+      email: 'gabrielOliva@trybe.com',
+      password: '123456',
+    });
 
     it("retorna status HTTP - 409 'CONFLICT' ", () => {
       expect(response).to.have.status(CONFLICT);
     });
-    it('retorna um Objeto', () => {
-      expect(response.body).to.be.a('object');
-    });
-    it("com a propriedade 'message'", () => {
-      expect(response.body).to.have.property('message');
-    });
-    it("com a mensagem 'Usuário já existe'", () => {
-      expect(response.body.message).to.be.equal('Usuário já existe');
+
+    it('retorna um objeto com a mensagem: Usuário já existe', () => {
+      expect(response.body).to.deep.equal({ message: 'Usuário já existe' });
     });
   });
 
   describe('checa se o usuário está inserindo os inputs corretamente', () => {
     it("Verifica se 'displayName' foi inserido!", async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          email: 'gabrielOliva@trybe.com', password: '123456',
-        });
+      const response = await chai.request(server).post('/user').send({
+        email: 'gabrielOliva@trybe.com',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal("'displayName' is required");
+      expect(response.body).to.deep.equal({ message: '"displayName" is required' });
     });
 
     it("Verifica se 'displayName' possui ao menos 8 caracteres!", async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel', email: 'gabrielOliva@trybe.com', password: '123456',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel',
+        email: 'gabrielOliva@trybe.com',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        "'displayName' length must be at least 8 characters long",
-      );
+      expect(response.body).to.deep.equal({ message: '"displayName" length must be at least 8 characters long' });
     });
+
     it('Email é requerido!', async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', password: '123456',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal("'email' is required");
+      expect(response.body).to.deep.equal({ message: '"email" is required' });
     });
     it('Email sem o nome do usuário!', async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', email: '@trybe.com', password: '123456',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        email: '@trybe.com',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        "'email' must be a valid email",
-      );
+      expect(response.body).to.deep.equal({ message: '"email" must be a valid email' });
     });
     it('Email sem o domínio!', async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', email: 'gabrielOliva', password: '123456',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        email: 'gabrielOliva',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
       expect(response.body).to.be.a('object');
       expect(response.body).to.have.property('message');
       expect(response.body.message).to.be.equal(
-        "'email' must be a valid email",
+        '"email" must be a valid email',
       );
     });
     it('Password é requerido!', async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        email: 'gabrielOliva@trybe.com',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal("'password' is required");
+      expect(response.body).to.deep.equal({ message: '"password" is required' });
     });
     it("Verifica se 'password' possui ao menos 6 caracteres!", async () => {
-      const response = await chai.request(server)
-        .post('/user')
-        .send({
-          displayName: 'Gabriel Oliva', email: 'gabrielOliva@trybe.com', password: '12345',
-        });
+      const response = await chai.request(server).post('/user').send({
+        displayName: 'Gabriel Oliva',
+        email: 'gabrielOliva@trybe.com',
+        password: '12345',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        "'password' length must be at least 6 characters long",
-      );
+      expect(response.body).to.deep.equal({ message: '"password" length must be at least 6 characters long' });
     });
   });
 });
 
 describe("2 - Utilizando a rota '/login'", () => {
   describe('chega se o usuário loga da forma correta', async () => {
-    const response = await chai.request(server)
-      .post('/login')
-      .send({
-        email: 'gabrielOliva@trybe.com', password: '123456',
-      });
+    const response = await chai.request(server).post('/login').send({
+      email: 'gabrielOliva@trybe.com',
+      password: '123456',
+    });
     it('retorna Status HTTP 200 - "OK"', () => {
       expect(response).to.have.status(OK);
     });
@@ -176,59 +157,40 @@ describe("2 - Utilizando a rota '/login'", () => {
 
   describe('checa se o usuário está inserindo os inputs corretamente', () => {
     it('Email é requerido!', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          password: '123456',
-        });
+      const response = await chai.request(server).post('/login').send({
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal("'email' is required");
+      expect(response.body).to.deep.equal({ message: '"email" is required' });
     });
     it('Email não pode ser vazio!', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          email: '', password: '123456',
-        });
+      const response = await chai.request(server).post('/login').send({
+        email: '',
+        password: '123456',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        "'email' is not allowed to be empty",
-      );
+      expect(response.body).to.deep.equal({ message: '"email" is not allowed to be empty' });
     });
     it('Password é requerido!', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          password: '123456',
-        });
+      const response = await chai.request(server).post('/login').send({
+        email: 'gabrielOliva@trybe.com',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal("'password' is required");
+      expect(response.body).to.deep.equal({ message: '"password" is required' });
     });
     it('Password não pode ser vazio!', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          email: 'gabrielOliva@trybe.com', password: '',
-        });
+      const response = await chai.request(server).post('/login').send({
+        email: 'gabrielOliva@trybe.com',
+        password: '',
+      });
       expect(response).to.have.status(BAD_REQUEST);
-      expect(response.body).to.be.a('object');
-      expect(response.body).to.have.property('message');
-      expect(response.body.message).to.be.equal(
-        "'password' is not allowed to be empty",
-      );
+      expect(response.body).to.deep.equal({ message: '"password" is not allowed to be empty' });
     });
     it('Verifica se as credenciais estão incorretas', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          email: 'gabrielOliva@trybe.com', password: '654321',
-        });
+      const response = await chai.request(server).post('/login').send({
+        email: 'gabrielOliva@trybe.com',
+        password: '654321',
+      });
 
       expect(response).to.have.status(BAD_REQUEST);
       expect(response.body).to.be.a('object');
@@ -236,11 +198,10 @@ describe("2 - Utilizando a rota '/login'", () => {
       expect(response.body.message).to.be.equal('Campos inválidos');
     });
     it('Verifica se as credenciais estão incorretas', async () => {
-      const response = await chai.request(server)
-        .post('/login')
-        .send({
-          email: 'gabrielOlivaDaSilva@trybe.com', password: '123456',
-        });
+      const response = await chai.request(server).post('/login').send({
+        email: 'gabrielOlivaDaSilva@trybe.com',
+        password: '123456',
+      });
 
       expect(response).to.have.status(BAD_REQUEST);
       expect(response.body).to.be.a('object');
@@ -266,17 +227,12 @@ describe("3 - Utilizando a rota GET '/user'", () => {
     });
 
     it('Devidamente autenticado', async () => {
-      response = await chai
-        .request(server)
-        .get('/user')
-        .set({ Authorization });
+      response = await chai.request(server).get('/user').set({ Authorization });
       expect(response).to.have.status(OK);
       expect(response.body).to.be.a('array');
     });
     it('Sem o token', async () => {
-      response = await chai
-        .request(server)
-        .get('/user');
+      response = await chai.request(server).get('/user');
       expect(response).to.have.status(UNAUTHORIZED);
       expect(response.body).to.be.a('object');
       expect(response.body).to.have.property('message');
@@ -333,9 +289,7 @@ describe("4 - Utilizando a rota GET '/user/:id'", () => {
       expect(response.body.message).to.be.equal('Usuário não existe');
     });
     it('Sem o token', async () => {
-      response = await chai
-        .request(server)
-        .get('/user/1');
+      response = await chai.request(server).get('/user/1');
       expect(response).to.have.status(UNAUTHORIZED);
       expect(response.body).to.be.a('object');
       expect(response.body).to.have.property('message');
@@ -372,9 +326,7 @@ describe("5 - Utilizando a rota DELETE '/user/me'", () => {
       expect(response).to.have.status(NO_CONTENT);
     });
     it('Sem o token', async () => {
-      const response = await chai
-        .request(server)
-        .delete('/user/me');
+      const response = await chai.request(server).delete('/user/me');
       expect(response).to.have.status(UNAUTHORIZED);
       expect(response.body).to.be.a('object');
       expect(response.body).to.have.property('message');
