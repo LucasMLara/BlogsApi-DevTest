@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "setProject" : "npx sequelize-cli db:drop && npx sequelize-cli db:create &&npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "setProject": "npx sequelize-cli db:drop && npx sequelize-cli db:create &&npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "test": "mocha ./tests/**/*$NAME*.test.js --exit",
     "dev": "clear && nodemon index.js",
-    "agilizateste":"npm run setProject && npm test"
+    "agilizateste": "npm run setProject && npm test"
   },
   "author": "Lucas M. Lara",
   "license": "ISC",
@@ -19,8 +19,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "mocha": "^9.2.1",
-    "nodemon": "^2.0.15",
-    "sinon": "^13.0.1"
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
     "body-parser": "^1.19.2",
